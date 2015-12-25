@@ -11,8 +11,6 @@ import Text.ParserCombinators.ReadP (readP_to_S)
 --
 -- > t :: UTCTime
 -- > t = $(mkUTCTime "2014-05-12 00:02:03.456000Z")
---
--- /Since: 0.2.3.0/
 mkUTCTime :: String -> Q Exp
 mkUTCTime s =
     case readP_to_S utcTime s of
