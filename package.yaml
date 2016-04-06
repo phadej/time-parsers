@@ -29,7 +29,7 @@ tests:
     dependencies:
       - time-parsers
       - attoparsec    >=0.12.1.6 && <0.14
-      - bifunctors    >=4.2.1    && <5.3
+      - bifunctors    >=4.2.1    && <5.4
       - parsec        >=3.1.9    && <3.2
       - parsers       >=0.12.3   && <0.13
       - tasty         >=0.10.1.2 && <0.12
