@@ -7,16 +7,16 @@ maintainer: Oleg Grenrus <oleg.grenrus@iki.fi>
 license: BSD3
 github: phadej/time-parsers
 category: Web
-tested-with: GHC==7.6.3, GHC==7.8.4, GHC==7.10.3
+tested-with: GHC==7.6.3, GHC==7.8.4, GHC==7.10.3, GHC==8.0.1
 extra-source-files:
 - README.md
 
 ghc-options: -Wall
 
 dependencies:
-  - base             >=4.6      && <4.9
+  - base             >=4.6      && <4.10
   - parsers          >=0.12.2.1 && <0.13
-  - template-haskell >=2.8.0.0  && <2.11
+  - template-haskell >=2.8.0.0  && <2.12
   - time             >=1.4.2    && <1.7
 
 library:
