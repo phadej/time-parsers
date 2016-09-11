@@ -44,11 +44,22 @@ timeStrings =
     , "2015-09-07 08:16:40.807 +00:00"
     , "2015-09-07 11:16:40.807 +03:00"
     , "2015-09-07 05:16:40.807 -03:00"
+    , "2015-09-07 05:16:40.807-03:00"
+    , "2015-09-07T05:16:40Z"
+    , "2015-09-07 05:16:40Z"
+    , "2015-09-07 05:16:40 Z"
+    , "2015-09-07 05:16:40+03:00"
+    , "2015-09-07 05:16:40 +03:00"
     ]
 
 timeTHTests :: TestTree
-timeTHTests =
-    testCase "time TH example" $ assertBool "should be equal" $ lhs == rhs
-      where lhs = UTCTime (ModifiedJulianDay 56789) 123.456
-            rhs = $(mkUTCTime "2014-05-12 00:02:03.456000Z")
+timeTHTests = testGroup "TH"
+    [ testCase "time" $ assertBool "should be equal" $ lhs == rhs
+    , testCase "day"  $ assertBool "should be equal" $ lhs' == rhs'
+    ]
+  where
+    lhs  = UTCTime (ModifiedJulianDay 56789) 123.456
+    rhs  = $(mkUTCTime "2014-05-12 00:02:03.456000Z")
+    lhs' = ModifiedJulianDay 56789
+    rhs' = $(mkDay "2014-05-12")
 
