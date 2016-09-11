@@ -54,12 +54,15 @@ timeStrings =
 
 timeTHTests :: TestTree
 timeTHTests = testGroup "TH"
-    [ testCase "time" $ assertBool "should be equal" $ lhs == rhs
-    , testCase "day"  $ assertBool "should be equal" $ lhs' == rhs'
+    [ testCase "time"   $ assertBool "should be equal" $ lhs0 == rhs0
+    , testCase "time' " $ assertBool "should be equal" $ lhs1 == rhs1
+    , testCase "day"    $ assertBool "should be equal" $ lhs2 == rhs2
     ]
   where
-    lhs  = UTCTime (ModifiedJulianDay 56789) 123.456
-    rhs  = $(mkUTCTime "2014-05-12 00:02:03.456000Z")
-    lhs' = ModifiedJulianDay 56789
-    rhs' = $(mkDay "2014-05-12")
+    lhs0 = UTCTime (ModifiedJulianDay 56789) 123.456
+    rhs0 = $(mkUTCTime "2014-05-12 00:02:03.456Z")
+    lhs1 = UTCTime (ModifiedJulianDay 56789) 123.0
+    rhs1 = $(mkUTCTime "2014-05-12 00:02:03Z")
+    lhs2 = ModifiedJulianDay 56789
+    rhs2 = $(mkDay "2014-05-12")
 
