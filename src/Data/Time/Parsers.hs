@@ -13,6 +13,7 @@
 
 module Data.Time.Parsers
     ( day
+    , month
     , localTime
     , timeOfDay
     , timeZone
@@ -21,7 +22,7 @@ module Data.Time.Parsers
     , DateParsing
     ) where
 
-import Control.Applicative   (optional, some)
+import Control.Applicative   (optional, some, (<|>))
 import Control.Monad         (void, when)
 import Data.Bits             ((.&.))
 import Data.Char             (isDigit, ord)
@@ -38,7 +39,7 @@ import Unsafe.Coerce         (unsafeCoerce)
 import qualified Data.Time.LocalTime as Local
 
 #if !MIN_VERSION_base(4,8,0)
-import Control.Applicative ((*>), (<$>), (<*), (<*>))
+import Control.Applicative ((*>), (<$>), (<$), (<*), (<*>))
 #endif
 
 type DateParsing m = (CharParsing m, LookAheadParsing m, Monad m)
@@ -46,13 +47,28 @@ type DateParsing m = (CharParsing m, LookAheadParsing m, Monad m)
 toPico :: Integer -> Pico
 toPico = unsafeCoerce
 
+-- | Parse a month of the form @YYYY-MM@
+month :: DateParsing m => m (Integer, Int)
+month = do
+  s <- negate <$ char '-' <|> id <$ char '+' <|> return id
+  y <- decimal
+  _ <- char '-'
+  m <- twoDigits
+  if (1 <= m && m <= 12)
+      then return (s y, m)
+      else fail "Invalid month"
+{-# INLINE month #-}
+
 -- | Parse a date of the form @YYYY-MM-DD@.
 day :: DateParsing m => m Day
 day = do
-  y <- decimal <* char '-'
-  m <- twoDigits <* char '-'
+  s <- negate <$ char '-' <|> id <$ char '+' <|> return id
+  y <- decimal
+  _ <- char '-'
+  m <- twoDigits
+  _ <- char '-'
   d <- twoDigits
-  maybe (fail "invalid date") return (fromGregorianValid y m d)
+  maybe (fail "invalid date") return (fromGregorianValid (s y) m d)
 
 -- | Parse a two-digit integer (e.g. day of month, hour).
 twoDigits :: DateParsing m => m Int
