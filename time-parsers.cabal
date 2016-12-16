@@ -1,12 +1,11 @@
--- This file has been generated from package.yaml by hpack version 0.14.0.
---
--- see: https://github.com/sol/hpack
-
 name:           time-parsers
-version:        0.1.1.0
+version:        0.1.2.0
 synopsis:       Parsers for types in `time`.
-description:    Parsers for types in `time`.
-category:       Web
+description:
+  Parsers for types in `time` using 'parser' library.
+  .
+  Originally forked from aeson parsers.
+category:       Parsing
 homepage:       https://github.com/phadej/time-parsers#readme
 bug-reports:    https://github.com/phadej/time-parsers/issues
 author:         Oleg Grenrus <oleg.grenrus@iki.fi>
@@ -46,10 +45,10 @@ test-suite date-parsers-tests
       test
   ghc-options: -Wall
   build-depends:
-      base             >=4.6      && <4.10
-    , parsers          >=0.12.2.1 && <0.13
-    , template-haskell >=2.8.0.0  && <2.12
-    , time             >=1.4.2    && <1.7
+      base
+    , parsers
+    , template-haskell
+    , time
     , time-parsers
     , attoparsec    >=0.12.1.6 && <0.14
     , bifunctors    >=4.2.1    && <5.5
