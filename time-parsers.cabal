@@ -7,7 +7,7 @@ description:
   .
   Originally forked from aeson parsers.
   .
-  See a lso <http://hackage.haskell.org/package/attoparsec-iso8601 attoparsec-iso-8601> package.
+  See also <http://hackage.haskell.org/package/attoparsec-iso8601 attoparsec-iso-8601> package.
 category:       Parsing
 homepage:       https://github.com/phadej/time-parsers#readme
 bug-reports:    https://github.com/phadej/time-parsers/issues
