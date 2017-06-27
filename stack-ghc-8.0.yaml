@@ -1,6 +1,0 @@
-resolver: nightly-2016-05-29
-packages:
-- '.'
-extra-deps:
-- parsers-0.12.4
-flags: {}
