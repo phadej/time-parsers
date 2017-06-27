@@ -1,7 +1,0 @@
-resolver: lts-2.22
-packages:
-- '.'
-extra-deps:
-- parsers-0.12.3
-- base-orphans-0.4.4
-flags: {}
