@@ -22,24 +22,25 @@ module Data.Time.Parsers
     , DateParsing
     ) where
 
-import Control.Applicative   (optional, some, (<|>))
-import Control.Monad         (void, when)
-import Data.Bits             ((.&.))
-import Data.Char             (isDigit, ord)
-import Data.Fixed            (Pico)
-import Data.Int              (Int64)
-import Data.List             (foldl')
-import Data.Maybe            (fromMaybe)
-import Data.Time.Calendar    (Day, fromGregorianValid)
-import Data.Time.Clock       (UTCTime (..))
-import Text.Parser.Char      (CharParsing (..), digit)
-import Text.Parser.LookAhead (LookAheadParsing (..))
-import Unsafe.Coerce         (unsafeCoerce)
+import Control.Applicative     (optional, some, (<|>))
+import Control.Monad           (void, when)
+import Data.Bits               ((.&.))
+import Data.Char               (isDigit, ord)
+import Data.Fixed              (Pico)
+import Data.Int                (Int64)
+import Data.List               (foldl')
+import Data.Maybe              (fromMaybe)
+import Data.Time.Calendar      (Day, fromGregorianValid)
+import Data.Time.Clock         (UTCTime (..))
+import Text.Parser.Char        (CharParsing (..), digit)
+import Text.Parser.Combinators (unexpected)
+import Text.Parser.LookAhead   (LookAheadParsing (..))
+import Unsafe.Coerce           (unsafeCoerce)
 
 import qualified Data.Time.LocalTime as Local
 
 #if !MIN_VERSION_base(4,8,0)
-import Control.Applicative ((*>), (<$>), (<$), (<*), (<*>))
+import Control.Applicative ((*>), (<$), (<$>), (<*), (<*>))
 #endif
 
 type DateParsing m = (CharParsing m, LookAheadParsing m, Monad m)
@@ -56,7 +57,7 @@ month = do
   m <- twoDigits
   if (1 <= m && m <= 12)
       then return (s y, m)
-      else fail "Invalid month"
+      else unexpected "Invalid month"
 {-# INLINE month #-}
 
 -- | Parse a date of the form @YYYY-MM-DD@.
@@ -68,7 +69,7 @@ day = do
   m <- twoDigits
   _ <- char '-'
   d <- twoDigits
-  maybe (fail "invalid date") return (fromGregorianValid (s y) m d)
+  maybe (unexpected "invalid date") return (fromGregorianValid (s y) m d)
 
 -- | Parse a two-digit integer (e.g. day of month, hour).
 twoDigits :: DateParsing m => m Int
@@ -86,7 +87,7 @@ timeOfDay = do
   s <- seconds
   if h < 24 && m < 60 && s < 61
     then return (Local.TimeOfDay h m s)
-    else fail "invalid time"
+    else unexpected "invalid time"
 
 data T = T {-# UNPACK #-} !Int {-# UNPACK #-} !Int64
 
@@ -131,7 +132,7 @@ timeZone = do
         _   | off == 0 ->
               return Nothing
             | off < -720 || off > 840 || m > 59 ->
-              fail "invalid time zone offset"
+              unexpected "invalid time zone offset"
             | otherwise ->
               let !tz = Local.minutesToTimeZone off
               in return (Just tz)
