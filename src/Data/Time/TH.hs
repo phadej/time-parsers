@@ -1,11 +1,16 @@
+{-# LANGUAGE CPP #-}
+#if __GLASGOW_HASKELL__ >= 800
+{-# LANGUAGE TemplateHaskellQuotes #-}
+#else
 {-# LANGUAGE TemplateHaskell #-}
+#endif
 -- | Template Haskell extras for `Data.Time`.
 module Data.Time.TH (mkUTCTime, mkDay) where
 
 import Data.List                    (nub)
 import Data.Time                    (Day (..), UTCTime (..))
 import Data.Time.Parsers            (day, utcTime)
-import Language.Haskell.TH          (Exp, Q, integerL, litE, rationalL)
+import Language.Haskell.TH          (Exp, Q, integerL, litE, appE, sigE, rationalL)
 import Text.ParserCombinators.ReadP (readP_to_S)
 
 -- | Make  a 'UTCTime'. Accepts the same strings as  `utcTime` parser accepts.
@@ -15,7 +20,7 @@ import Text.ParserCombinators.ReadP (readP_to_S)
 mkUTCTime :: String -> Q Exp
 mkUTCTime s = case nub $ readP_to_S utcTime s of
     [(UTCTime (ModifiedJulianDay d) dt, "")] ->
-        [| UTCTime (ModifiedJulianDay $(d')) $(dt') :: UTCTime |]
+        ([| UTCTime |] `appE` ([| ModifiedJulianDay |] `appE` d') `appE` dt') `sigE` [t| UTCTime |]
       where
         d'  = litE $ integerL d
         dt' = litE $ rationalL $ toRational dt
@@ -28,7 +33,7 @@ mkUTCTime s = case nub $ readP_to_S utcTime s of
 mkDay :: String -> Q Exp
 mkDay s = case nub $ readP_to_S day s of
     [(ModifiedJulianDay d, "")] ->
-        [| ModifiedJulianDay $(d') :: Day |]
+        ([| ModifiedJulianDay |] `appE` d') `sigE` [t| Day |]
       where
         d'  = litE $ integerL d
     ps -> error $ "Cannot parse day: " ++ s ++ " -- " ++ show ps
