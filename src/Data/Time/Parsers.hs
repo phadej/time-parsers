@@ -55,7 +55,7 @@ month = do
   y <- decimal
   _ <- char '-'
   m <- twoDigits
-  if (1 <= m && m <= 12)
+  if 1 <= m && m <= 12
       then return (s y, m)
       else unexpected "Invalid month"
 {-# INLINE month #-}
