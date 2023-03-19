@@ -1,3 +1,7 @@
+- 0.2
+    - Add `year` parser which requires at least four digits.
+      Use it in `month`, `day` etc.
+
 - 0.1.2.1
     - Use `unexpected` instead of `fail`
 

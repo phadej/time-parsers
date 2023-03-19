@@ -14,6 +14,7 @@
 module Data.Time.Parsers
     ( day
     , month
+    , year
     , localTime
     , timeOfDay
     , timeZone
@@ -48,11 +49,22 @@ type DateParsing m = (CharParsing m, LookAheadParsing m, Monad m)
 toPico :: Integer -> Pico
 toPico = unsafeCoerce
 
+-- | Parse a year @YYYY@, with at least 4 digits. Does not include any sign.
+--
+-- @since 0.2
+year :: DateParsing m => m Integer
+year = do
+  ds <- some digit
+  if length ds < 4
+  then unexpected "expected year with at least 4 digits"
+  else return (foldl' step 0 ds)
+  where step a w = a * 10 + fromIntegral (ord w - 48)
+
 -- | Parse a month of the form @YYYY-MM@
 month :: DateParsing m => m (Integer, Int)
 month = do
   s <- negate <$ char '-' <|> id <$ char '+' <|> return id
-  y <- decimal
+  y <- year
   _ <- char '-'
   m <- twoDigits
   if 1 <= m && m <= 12
@@ -64,7 +76,7 @@ month = do
 day :: DateParsing m => m Day
 day = do
   s <- negate <$ char '-' <|> id <$ char '+' <|> return id
-  y <- decimal
+  y <- year
   _ <- char '-'
   m <- twoDigits
   _ <- char '-'
