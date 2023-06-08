@@ -1,3 +1,7 @@
+- 0.2.0.1
+
+    - Use `integer-conversion` (in converting year)
+
 - 0.2
     - Add `year` parser which requires at least four digits.
       Use it in `month`, `day` etc.
