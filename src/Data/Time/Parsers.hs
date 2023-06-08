@@ -29,6 +29,7 @@ import Data.Bits               ((.&.))
 import Data.Char               (isDigit, ord)
 import Data.Fixed              (Pico)
 import Data.Int                (Int64)
+import Data.Integer.Conversion (stringToInteger)
 import Data.List               (foldl')
 import Data.Maybe              (fromMaybe)
 import Data.Time.Calendar      (Day, fromGregorianValid)
@@ -57,8 +58,7 @@ year = do
   ds <- some digit
   if length ds < 4
   then unexpected "expected year with at least 4 digits"
-  else return (foldl' step 0 ds)
-  where step a w = a * 10 + fromIntegral (ord w - 48)
+  else return (stringToInteger ds)
 
 -- | Parse a month of the form @YYYY-MM@
 month :: DateParsing m => m (Integer, Int)
@@ -181,10 +181,6 @@ zonedTime = Local.ZonedTime <$> localTime <*> (fromMaybe utc <$> timeZone)
 
 utc :: Local.TimeZone
 utc = Local.TimeZone 0 False ""
-
-decimal :: (DateParsing m, Integral a) => m a
-decimal = foldl' step 0 `fmap` some digit
-  where step a w = a * 10 + fromIntegral (ord w - 48)
 
 peekChar :: DateParsing m => m (Maybe Char)
 peekChar = optional peekChar'
