@@ -1,5 +1,7 @@
-- 0.2.0.1
+- 0.3
 
+    - TimeZone parser doesn't accept leading space,
+      therefore there cannot be space before timezone in UTCTime format either.
     - Use `integer-conversion` (in converting year)
 
 - 0.2

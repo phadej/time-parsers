@@ -18,14 +18,21 @@ main :: IO ()
 main = defaultMain $ testGroup "tests" [utctimeTests, monthTests, timeTHTests]
 
 utctimeTests :: TestTree
-utctimeTests = testGroup "utcTime" $ map t utctimeStrings
+utctimeTests = testGroup "utcTime"
+    [ testGroup "valid" $ map t utctimeStrings
+    , testGroup "invalid" $ map i invalidUtctimeStrings
+    ]
   where
     t str = testCase str $ do
         assertBool str (isRight $ parseParsec str)
         assertEqual str (parseParsec str) (parseAttoParsec str)
 
+    i str = testCase str $ do
+        assertBool str (isLeft $ parseParsec str)
+        assertBool str (isLeft $ parseAttoParsec str)
+
 monthTests :: TestTree
-monthTests = testGroup "month" $ 
+monthTests = testGroup "month"
     [ testGroup "valid" $ map t monthStrings
     , testGroup "invalid" $ map i invalidMonthStrings
     ]
@@ -34,8 +41,9 @@ monthTests = testGroup "month" $
         assertBool str (isRight $ parseParsecMonth str)
         assertEqual str (parseParsecMonth str) (parseAttoParsecMonth str)
 
-    i str = testCase str $
+    i str = testCase str $ do
         assertBool str (isLeft $ parseParsecMonth str)
+        assertBool str (isLeft $ parseAttoParsecMonth str)
 
 isRight :: Either a b -> Bool
 isRight (Left _)  = False
@@ -60,17 +68,26 @@ utctimeStrings :: [String]
 utctimeStrings =
     [ "2015-09-07T08:16:40.807Z"
     , "2015-09-07T11:16:40.807+0300"
+    , "2015-09-07T11:16:40.807+03:00"
     , "2015-09-07 08:16:40.807Z"
-    , "2015-09-07 08:16:40.807 Z"
+    , "2015-09-07 08:16:40.807+00:00"
+    , "2015-09-07 11:16:40.807+03:00"
+    , "2015-09-07 05:16:40.807-03:00"
+    , "2015-09-07T05:16:40Z"
+    , "2015-09-07 05:16:40Z"
+    , "2015-09-07 05:16:40Z"
+    , "2015-09-07 05:16:40+03:00"
+    , "0000-09-07 05:16:40+03:00"
+    ]
+
+invalidUtctimeStrings :: [String]
+invalidUtctimeStrings =
+    [ "2015-09-07 08:16:40.807 Z"
     , "2015-09-07 08:16:40.807 +0000"
     , "2015-09-07 08:16:40.807 +00:00"
     , "2015-09-07 11:16:40.807 +03:00"
     , "2015-09-07 05:16:40.807 -03:00"
-    , "2015-09-07 05:16:40.807-03:00"
-    , "2015-09-07T05:16:40Z"
-    , "2015-09-07 05:16:40Z"
     , "2015-09-07 05:16:40 Z"
-    , "2015-09-07 05:16:40+03:00"
     , "2015-09-07 05:16:40 +03:00"
     , "0000-09-07 05:16:40 +03:00"
     ]
