@@ -1,6 +1,6 @@
 cabal-version:      >=1.10
 name:               time-parsers
-version:            0.2.0.1
+version:            0.3
 synopsis:           Parsers for types in time.
 category:           Parsing
 description:

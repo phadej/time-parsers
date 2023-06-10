@@ -24,7 +24,6 @@ module Data.Time.Parsers
     ) where
 
 import Control.Applicative     (optional, some, (<|>))
-import Control.Monad           (void, when)
 import Data.Bits               ((.&.))
 import Data.Char               (isDigit, ord)
 import Data.Fixed              (Pico)
@@ -123,10 +122,11 @@ seconds = do
 
 -- | Parse a time zone, and return 'Nothing' if the offset from UTC is
 -- zero. (This makes some speedups possible.)
+--
+-- The accepted formats are @Z@, @+HH@, @+HHMM@, or @+HH:MM@.
+--
 timeZone :: DateParsing m => m (Maybe Local.TimeZone)
 timeZone = do
-  let maybeSkip c = do ch <- peekChar'; when (ch == c) (void anyChar)
-  maybeSkip ' '
   ch <- satisfy $ \c -> c == 'Z' || c == '+' || c == '-'
   if ch == 'Z'
     then return Nothing
